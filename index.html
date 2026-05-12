@@ -1324,11 +1324,27 @@ async function fetchData() {
     
     const peopleObj = {};
     let filteredOut = 0;
+    let filteredDemanda = 0;
+    
+    // Detectar si un nombre/id corresponde a una "demanda" (puesto sin cubrir)
+    const isDemanda = (p) => {
+      const haystack = ((p.fullName || '') + ' ' + (p.id || '') + ' ' + (p.firstName || '') + ' ' + (p.lastName || ''))
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');  // sin tildes
+      // Cualquier ocurrencia de "demanda" como palabra (case-insensitive, sin tildes)
+      return /\bdemandas?\b/.test(haystack);
+    };
+    
     const processOne = (rawPerson) => {
       const norm = normalizePerson(rawPerson);
       // Filtrar inactivos: no aparecen en el organigrama
       if (norm.status === 'Inactivo') {
         filteredOut++;
+        return;
+      }
+      // Filtrar "demandas" (puestos sin persona real asignada)
+      if (isDemanda(norm)) {
+        filteredDemanda++;
         return;
       }
       peopleObj[norm.id] = norm;
@@ -1352,7 +1368,7 @@ async function fetchData() {
       people: peopleObj
     };
     
-    console.log('[Organigrama] Cargadas ' + Object.keys(peopleObj).length + ' personas activas (' + filteredOut + ' inactivas filtradas)');
+    console.log('[Organigrama] Cargadas ' + Object.keys(peopleObj).length + ' personas (' + filteredOut + ' inactivas + ' + filteredDemanda + ' demandas filtradas)');
   } catch (err) {
     console.error('[Organigrama] Error cargando data.json:', err);
     document.body.innerHTML = '<div style="padding:60px;font-family:Inter,sans-serif;max-width:600px;margin:80px auto;background:#fff;border:1px solid #eee;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08)"><h1 style="font-family:Fraunces,serif;color:#E6007E;margin-bottom:16px">⚠️ No se pudo cargar data.json</h1><p style="color:#333;line-height:1.6">El archivo <code style="background:#f4f4f4;padding:2px 6px;border-radius:4px">data.json</code> no está disponible junto al HTML.</p><p style="color:#666;font-size:14px;margin-top:16px">Detalle: ' + err.message + '</p><p style="color:#666;font-size:13px;margin-top:24px;padding-top:16px;border-top:1px solid #eee">Asegúrate de que: <br>1) <b>data.json</b> está en la misma carpeta que <b>index.html</b><br>2) Estás accediendo via http(s):// (no file://)<br>3) Has hecho push del archivo a GitHub Pages</p></div>';
