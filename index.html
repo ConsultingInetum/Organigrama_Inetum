@@ -563,8 +563,8 @@ body {
 /* === COMPACT GRID (vista compacta para hojas) === */
 .compact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
   margin: 8px 0 8px 0;
   position: relative;
 }
@@ -583,91 +583,111 @@ body {
 .compact-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 12px 12px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: center;
+  transition: all 0.2s ease;
+  text-align: left;
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
   position: relative;
+  overflow: hidden;
+  padding: 0;  /* el padding va dentro del body */
 }
 .compact-card:hover {
   border-color: var(--accent);
   box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
-  background: var(--card-hover);
+  transform: translateY(-3px);
 }
 .compact-card.is-matrix {
   border-style: dashed;
   border-color: var(--matrix);
-  background: var(--matrix-soft);
 }
 .compact-card.is-matrix:hover { border-color: var(--matrix); }
 .compact-card.is-inactive { opacity: 0.55; }
-.compact-card.is-baja { border-color: var(--warn); background: var(--warn-soft); }
+.compact-card.is-baja { border-color: var(--warn); }
 .compact-card.is-me {
   border-color: var(--accent);
-  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--card) 100%);
-  border-width: 1.5px;
+  border-width: 2px;
+  box-shadow: 0 0 0 1px var(--accent), var(--shadow-hover);
 }
 .compact-card.dimmed { opacity: 0.25; }
 .compact-card.search-match { box-shadow: 0 0 0 2px var(--warn), var(--shadow-hover); border-color: var(--warn); }
 .compact-card.highlight-branch { border-color: var(--accent); box-shadow: 0 0 0 1.5px var(--accent); }
 
-.compact-card .avatar-lg {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #F5F2EA 0%, #EBE6D8 100%);
+/* === FOTO GRANDE ARRIBA (ratio 1:1) === */
+.compact-card .photo-cover {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: var(--bg);
+  position: relative;
+}
+/* Fallback bonito: iniciales gigantes sobre degradado pastel */
+.compact-card .photo-cover.no-photo {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-image: linear-gradient(135deg, #F5F2EA 0%, #EBE6D8 100%);
+}
+.compact-card .photo-cover.no-photo .initials-big {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: clamp(28px, 5vw, 44px);
   color: var(--text-dim);
-  letter-spacing: -0.4px;
-  border: 1.5px solid var(--border);
-  margin-bottom: 2px;
+  letter-spacing: -1px;
+  opacity: 0.7;
 }
-.compact-card.is-matrix .avatar-lg {
-  background: linear-gradient(135deg, #C9E5E1 0%, #A5D2CC 100%);
-  color: var(--matrix);
-  border-color: var(--matrix);
+.compact-card.is-matrix .photo-cover.no-photo {
+  background-image: linear-gradient(135deg, #C9E5E1 0%, #A5D2CC 100%);
 }
+.compact-card.is-matrix .photo-cover.no-photo .initials-big { color: var(--matrix); }
+
+/* === ZONA INFO (debajo de la foto) === */
+.compact-card .card-body {
+  padding: 12px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--card);
+  flex: 1;
+}
+.compact-card.is-me .card-body {
+  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--card) 100%);
+}
+.compact-card.is-baja .card-body { background: var(--warn-soft); }
+.compact-card.is-matrix .card-body { background: var(--matrix-soft); }
+
 .compact-card .c-name {
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--text);
-  letter-spacing: -0.1px;
-  line-height: 1.25;
-  text-align: center;
+  letter-spacing: -0.15px;
+  line-height: 1.2;
+  text-align: left;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  width: 100%;
 }
 .compact-card .c-role {
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--text-dim);
-  line-height: 1.2;
+  line-height: 1.25;
+  font-style: italic;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  width: 100%;
 }
 .compact-card .c-tags {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 2px;
+  justify-content: flex-start;
+  margin-top: 6px;
 }
 .compact-card .c-tags .tag { font-size: 9px; padding: 1px 6px; }
 
@@ -797,8 +817,8 @@ body {
 .group-body {
   padding: 20px 22px 22px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
 }
 .group-block.collapsed .group-body { display: none; }
 
@@ -806,74 +826,94 @@ body {
 .grouped-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 14px 14px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: center;
+  transition: all 0.2s ease;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
   position: relative;
   box-shadow: var(--shadow-card);
+  overflow: hidden;
+  padding: 0;
 }
 .grouped-card:hover {
   border-color: var(--accent);
   box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
-  background: var(--card-hover);
+  transform: translateY(-3px);
 }
 .grouped-card.is-inactive { opacity: 0.55; }
-.grouped-card.is-baja { border-color: var(--warn); background: var(--warn-soft); }
+.grouped-card.is-baja { border-color: var(--warn); }
 .grouped-card.is-me {
   border-color: var(--accent);
-  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--card) 100%);
-  border-width: 1.5px;
+  border-width: 2px;
+  box-shadow: 0 0 0 1px var(--accent), var(--shadow-hover);
 }
 .grouped-card.dimmed { opacity: 0.25; }
 .grouped-card.search-match { box-shadow: 0 0 0 2px var(--warn), var(--shadow-hover); border-color: var(--warn); }
 
-.grouped-card .avatar-big {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #F5F2EA 0%, #EBE6D8 100%);
+/* === FOTO GRANDE ARRIBA === */
+.grouped-card .photo-cover {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: var(--bg);
+}
+.grouped-card .photo-cover.no-photo {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 17px;
-  color: var(--text-dim);
-  letter-spacing: -0.5px;
-  border: 2px solid var(--card);
-  outline: 1px solid var(--border);
-  margin-bottom: 4px;
+  background-image: linear-gradient(135deg, #F5F2EA 0%, #EBE6D8 100%);
 }
+.grouped-card .photo-cover.no-photo .initials-big {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(28px, 5vw, 44px);
+  color: var(--text-dim);
+  letter-spacing: -1px;
+  opacity: 0.7;
+}
+
+/* === BODY === */
+.grouped-card .card-body {
+  padding: 14px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--card);
+  flex: 1;
+}
+.grouped-card.is-me .card-body {
+  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--card) 100%);
+}
+.grouped-card.is-baja .card-body { background: var(--warn-soft); }
+
 .grouped-card .gc-name {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 13.5px;
+  font-weight: 700;
   color: var(--text);
-  letter-spacing: -0.15px;
-  line-height: 1.25;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+  text-align: left;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  width: 100%;
 }
 .grouped-card .gc-role {
   font-size: 11px;
   color: var(--text-dim);
   line-height: 1.25;
+  font-style: italic;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  width: 100%;
 }
 .grouped-card .gc-pill {
+  align-self: flex-start;
   display: inline-block;
   font-size: 9.5px;
   font-weight: 700;
@@ -1475,24 +1515,25 @@ function renderCompactCard(node) {
   if (person.status === 'Baja Temporal') card.classList.add('is-baja');
   if (node.id === ME_ID) card.classList.add('is-me');
   
-  // Avatar (grande)
-  const avatar = document.createElement('div');
-  avatar.className = 'avatar-lg';
-  setAvatar(avatar, person);
-  card.appendChild(avatar);
+  // FOTO GRANDE ARRIBA (cover)
+  card.appendChild(createPhotoCover(person));
+  
+  // BODY (info debajo de la foto)
+  const body = document.createElement('div');
+  body.className = 'card-body';
   
   // Nombre
   const nm = document.createElement('div');
   nm.className = 'c-name';
   nm.textContent = person.fullName;
-  card.appendChild(nm);
+  body.appendChild(nm);
   
   // Rol
   if (person.role) {
     const rl = document.createElement('div');
     rl.className = 'c-role';
     rl.textContent = person.role;
-    card.appendChild(rl);
+    body.appendChild(rl);
   }
   
   // Tags
@@ -1507,8 +1548,9 @@ function renderCompactCard(node) {
   if (person.isJunior) tags.innerHTML += '<span class="tag junior">Jr</span>';
   if (person.status === 'Inactivo') tags.innerHTML += '<span class="tag inactive">Inactivo</span>';
   if (person.status === 'Baja Temporal') tags.innerHTML += '<span class="tag baja">Baja</span>';
-  card.appendChild(tags);
+  body.appendChild(tags);
   
+  card.appendChild(body);
   card.onclick = () => openModal(node.id);
   return card;
 }
@@ -1806,6 +1848,23 @@ const AVATAR_SILHOUETTE_SVG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   '</svg>'
 );
 
+// === HELPER PARA FOTO TIPO COVER (cards grandes en vistas Team/Location) ===
+// Crea un div .photo-cover con la foto grande arriba, o fallback con iniciales gigantes
+function createPhotoCover(person) {
+  const cover = document.createElement('div');
+  cover.className = 'photo-cover';
+  if (person.photoUrl) {
+    cover.style.backgroundImage = `url("${person.photoUrl}")`;
+  } else {
+    cover.classList.add('no-photo');
+    const initials = document.createElement('div');
+    initials.className = 'initials-big';
+    initials.textContent = person.initials || '??';
+    cover.appendChild(initials);
+  }
+  return cover;
+}
+
 function setAvatar(avatarEl, person) {
   // Casos especiales: ROOT y JOSE_OTERO mantienen iniciales (look del header)
   if (person.id === 'ROOT_EQUIPO' || person.id === 'JOSE_OTERO' || person.id === 'SIN_ASIGNAR') {
@@ -2048,30 +2107,30 @@ function renderGroupedCard(person) {
   if (person.status === 'Baja Temporal') card.classList.add('is-baja');
   if (person.id === ME_ID) card.classList.add('is-me');
   
-  // Avatar
-  const avatar = document.createElement('div');
-  avatar.className = 'avatar-big';
-  setAvatar(avatar, person);
-  card.appendChild(avatar);
+  // FOTO GRANDE ARRIBA (cover)
+  card.appendChild(createPhotoCover(person));
+  
+  // BODY
+  const body = document.createElement('div');
+  body.className = 'card-body';
   
   // Nombre
   const nameEl = document.createElement('div');
   nameEl.className = 'gc-name';
   nameEl.textContent = person.fullName;
-  card.appendChild(nameEl);
+  body.appendChild(nameEl);
   
-  // Pill de rol (tipo Evaluadores)
+  // Pill de rol
   if (person.role) {
     const pill = document.createElement('span');
     pill.className = 'gc-pill ' + roleToPillClass(person.role);
     pill.textContent = shortRoleLabel(person.role);
-    card.appendChild(pill);
+    body.appendChild(pill);
   }
   
   // Mini-tags
   const tags = document.createElement('div');
   tags.className = 'gc-mini-tags';
-  // Team/Sector/Location depending on view
   if (currentView !== 'team' && person.teamDisplay) {
     const t = person.teamDisplay.split(',')[0].trim();
     if (t) tags.innerHTML += `<span class="tag team">${t}</span>`;
@@ -2082,8 +2141,9 @@ function renderGroupedCard(person) {
   if (person.isJunior) tags.innerHTML += '<span class="tag junior">Jr</span>';
   if (person.status === 'Inactivo') tags.innerHTML += '<span class="tag inactive">Inactivo</span>';
   if (person.status === 'Baja Temporal') tags.innerHTML += '<span class="tag baja">Baja</span>';
-  card.appendChild(tags);
+  body.appendChild(tags);
   
+  card.appendChild(body);
   card.onclick = () => openModal(person.id);
   return card;
 }
