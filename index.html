@@ -356,6 +356,24 @@ body {
   letter-spacing: -0.3px;
   border: 1px solid var(--border);
 }
+/* Cuando hay foto/silueta: el background-image manda */
+.avatar.has-photo,
+.avatar-lg.has-photo,
+.avatar-big.has-photo {
+  background-color: var(--bg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+/* Override en estados especiales para no perder el styling cuando hay foto */
+.row.is-matrix .avatar.has-photo,
+.row.is-root .avatar.has-photo,
+.row.is-jose-otero .avatar.has-photo,
+.row.is-sin-asignar .avatar.has-photo {
+  background-image: var(--bg-photo, none);
+  background-size: cover;
+  background-position: center;
+}
 .row.is-matrix .avatar { background: linear-gradient(135deg, #C9E5E1 0%, #A5D2CC 100%); color: var(--matrix); border-color: var(--matrix); }
 .row.is-root .avatar { background: rgba(255,255,255,0.18); color: white; border-color: rgba(255,255,255,0.3); }
 .row.is-jose-otero .avatar { background: rgba(255,255,255,0.2); color: white; border-color: rgba(255,255,255,0.3); }
@@ -1358,12 +1376,7 @@ function renderRow(node, isRoot = false) {
   // Avatar
   const avatar = document.createElement('div');
   avatar.className = 'avatar';
-  if (person.photoUrl) {
-    avatar.style.background = `url(${person.photoUrl}) center/cover`;
-    avatar.textContent = '';
-  } else {
-    avatar.textContent = person.initials || '??';
-  }
+  setAvatar(avatar, person);
   row.appendChild(avatar);
   
   // Info
@@ -1465,12 +1478,7 @@ function renderCompactCard(node) {
   // Avatar (grande)
   const avatar = document.createElement('div');
   avatar.className = 'avatar-lg';
-  if (person.photoUrl) {
-    avatar.style.background = `url(${person.photoUrl}) center/cover`;
-    avatar.textContent = '';
-  } else {
-    avatar.textContent = person.initials || '??';
-  }
+  setAvatar(avatar, person);
   card.appendChild(avatar);
   
   // Nombre
@@ -1788,18 +1796,46 @@ const modalOverlay = document.getElementById('modal-overlay');
 const modalHeader = document.getElementById('modal-header');
 const modalBody = document.getElementById('modal-body');
 
+// === HELPER GLOBAL: render de avatar (foto, fallback a silueta) ===
+// SVG silueta genérica (icono usuario), encoded inline
+const AVATAR_SILHOUETTE_SVG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
+  '<rect width="100" height="100" fill="%23E5E3DD"/>' +
+  '<circle cx="50" cy="40" r="16" fill="%23B5B1A8"/>' +
+  '<path d="M20 90 C 20 70, 35 60, 50 60 C 65 60, 80 70, 80 90 Z" fill="%23B5B1A8"/>' +
+  '</svg>'
+);
+
+function setAvatar(avatarEl, person) {
+  // Casos especiales: ROOT y JOSE_OTERO mantienen iniciales (look del header)
+  if (person.id === 'ROOT_EQUIPO' || person.id === 'JOSE_OTERO' || person.id === 'SIN_ASIGNAR') {
+    avatarEl.textContent = person.initials || '??';
+    avatarEl.style.backgroundImage = '';
+    avatarEl.classList.remove('has-photo');
+    return;
+  }
+  avatarEl.classList.add('has-photo');
+  if (person.photoUrl) {
+    avatarEl.style.backgroundImage = `url("${person.photoUrl}")`;
+  } else {
+    avatarEl.style.backgroundImage = `url("${AVATAR_SILHOUETTE_SVG}")`;
+  }
+  avatarEl.textContent = '';
+}
+
 function openModal(id) {
   const p = DATA.people[id];
   if (!p) return;
   state.selectedId = id;
   
   modalHeader.innerHTML = `
-    <div class="avatar">${p.initials || '??'}</div>
+    <div class="avatar" id="modal-avatar"></div>
     <div class="modal-title">
       <h2>${p.fullName}</h2>
       <div class="role">${p.role || ''}</div>
     </div>
   `;
+  setAvatar(document.getElementById('modal-avatar'), p);
   
   const rows = [];
   if (p.teamDisplay) rows.push(['Team', p.teamDisplay]);
@@ -2015,12 +2051,7 @@ function renderGroupedCard(person) {
   // Avatar
   const avatar = document.createElement('div');
   avatar.className = 'avatar-big';
-  if (person.photoUrl) {
-    avatar.style.background = `url(${person.photoUrl}) center/cover`;
-    avatar.textContent = '';
-  } else {
-    avatar.textContent = person.initials || '??';
-  }
+  setAvatar(avatar, person);
   card.appendChild(avatar);
   
   // Nombre
