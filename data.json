@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "Organigrama Equipo Inetum Consulting España",
-    "totalPeople": 140,
-    "generatedAt": "2026-05-12 09:46",
-    "source": "Microsoft List · RÉPLICA - Equipo Inetum Consulting.csv"
+    "totalPeople": 141,
+    "generatedAt": "2026-05-12 09:54",
+    "source": "Microsoft List · RÉPLICA - Equipo Inetum Consulting (1).csv"
   },
   "people": [
     {
@@ -3485,6 +3485,32 @@
       "status": "Activo",
       "manager": "",
       "mentor": "Rosa-Fernandez Joaquim",
+      "leaveDate": "",
+      "weeklyHours": "",
+      "inList": true,
+      "photoUrl": ""
+    },
+    {
+      "id": "123",
+      "fullName": "Test 1 Act",
+      "firstName": "Test 1",
+      "lastName": "Act",
+      "initials": "TA",
+      "role": "Senior Consultant",
+      "team": [
+        "FSI",
+        "ESG"
+      ],
+      "teamDisplay": "FSI, ESG",
+      "sector": "",
+      "location": "",
+      "entryDate": "",
+      "costCenter": "Inetum",
+      "sapCode": "123 455",
+      "isJunior": false,
+      "status": "Activo",
+      "manager": "",
+      "mentor": "",
       "leaveDate": "",
       "weeklyHours": "",
       "inList": true,
