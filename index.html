@@ -645,23 +645,18 @@ body {
 }
 .compact-card.is-matrix .photo-cover.no-photo .initials-big { color: var(--matrix); }
 
-/* === ZONA INFO (debajo de la foto) === */
+/* === ZONA INFO (debajo de la foto) — compacta para que la foto tenga protagonismo === */
 .compact-card .card-body {
-  padding: 12px 12px 12px;
+  padding: 8px 10px 9px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   background: var(--card);
   flex: 1;
 }
-.compact-card.is-me .card-body {
-  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--card) 100%);
-}
-.compact-card.is-baja .card-body { background: var(--warn-soft); }
-.compact-card.is-matrix .card-body { background: var(--matrix-soft); }
 
 .compact-card .c-name {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.15px;
@@ -673,9 +668,9 @@ body {
   overflow: hidden;
 }
 .compact-card .c-role {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-dim);
-  line-height: 1.25;
+  line-height: 1.2;
   font-style: italic;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -684,10 +679,10 @@ body {
 }
 .compact-card .c-tags {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   flex-wrap: wrap;
   justify-content: flex-start;
-  margin-top: 6px;
+  margin-top: 3px;
 }
 .compact-card .c-tags .tag { font-size: 9px; padding: 1px 6px; }
 
@@ -878,20 +873,16 @@ body {
 
 /* === BODY === */
 .grouped-card .card-body {
-  padding: 14px 14px 14px;
+  padding: 9px 12px 10px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
   background: var(--card);
   flex: 1;
 }
-.grouped-card.is-me .card-body {
-  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--card) 100%);
-}
-.grouped-card.is-baja .card-body { background: var(--warn-soft); }
 
 .grouped-card .gc-name {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.2px;
@@ -903,9 +894,9 @@ body {
   overflow: hidden;
 }
 .grouped-card .gc-role {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-dim);
-  line-height: 1.25;
+  line-height: 1.2;
   font-style: italic;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -915,13 +906,13 @@ body {
 .grouped-card .gc-pill {
   align-self: flex-start;
   display: inline-block;
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 700;
-  padding: 3px 11px;
+  padding: 2px 9px;
   border-radius: 100px;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-top: 4px;
+  letter-spacing: 0.7px;
+  margin-top: 2px;
 }
 .grouped-card .gc-pill.analista { background: var(--accent-soft); color: var(--accent-strong); }
 .grouped-card .gc-pill.consultor { background: #E8E3F5; color: #5B3FA8; }
@@ -978,10 +969,6 @@ body {
 </header>
 
 <div class="filters-bar" id="filters-bar">
-  <div class="filter-group">
-    <span class="filter-label">Estatus</span>
-    <div class="chips-row" id="filter-status"></div>
-  </div>
   <div class="filter-group">
     <span class="filter-label">Sector</span>
     <div class="chips-row" id="filter-sector"></div>
@@ -1273,16 +1260,21 @@ async function fetchData() {
     const raw = await resp.json();
     
     const peopleObj = {};
+    let filteredOut = 0;
+    const processOne = (rawPerson) => {
+      const norm = normalizePerson(rawPerson);
+      // Filtrar inactivos: no aparecen en el organigrama
+      if (norm.status === 'Inactivo') {
+        filteredOut++;
+        return;
+      }
+      peopleObj[norm.id] = norm;
+    };
+    
     if (Array.isArray(raw.people)) {
-      for (const p of raw.people) {
-        const norm = normalizePerson(p);
-        peopleObj[norm.id] = norm;
-      }
+      for (const p of raw.people) processOne(p);
     } else {
-      for (const id in raw.people) {
-        const norm = normalizePerson(raw.people[id]);
-        peopleObj[norm.id] = norm;
-      }
+      for (const id in raw.people) processOne(raw.people[id]);
     }
     
     const tree = buildTreeFromList(peopleObj);
@@ -1297,7 +1289,7 @@ async function fetchData() {
       people: peopleObj
     };
     
-    console.log('[Organigrama] Cargadas ' + Object.keys(peopleObj).length + ' personas desde data.json');
+    console.log('[Organigrama] Cargadas ' + Object.keys(peopleObj).length + ' personas activas (' + filteredOut + ' inactivas filtradas)');
   } catch (err) {
     console.error('[Organigrama] Error cargando data.json:', err);
     document.body.innerHTML = '<div style="padding:60px;font-family:Inter,sans-serif;max-width:600px;margin:80px auto;background:#fff;border:1px solid #eee;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08)"><h1 style="font-family:Fraunces,serif;color:#E6007E;margin-bottom:16px">⚠️ No se pudo cargar data.json</h1><p style="color:#333;line-height:1.6">El archivo <code style="background:#f4f4f4;padding:2px 6px;border-radius:4px">data.json</code> no está disponible junto al HTML.</p><p style="color:#666;font-size:14px;margin-top:16px">Detalle: ' + err.message + '</p><p style="color:#666;font-size:13px;margin-top:24px;padding-top:16px;border-top:1px solid #eee">Asegúrate de que: <br>1) <b>data.json</b> está en la misma carpeta que <b>index.html</b><br>2) Estás accediendo via http(s):// (no file://)<br>3) Has hecho push del archivo a GitHub Pages</p></div>';
@@ -1390,9 +1382,9 @@ function renderRow(node, isRoot = false) {
   
   // Classes based on type/status
   if (node.relation === 'matrix') row.classList.add('is-matrix');
-  if (person.status === 'Inactivo') row.classList.add('is-inactive');
+  // inactivos ya están filtrados
   if (person.status === 'Baja Temporal') row.classList.add('is-baja');
-  if (node.id === ME_ID) row.classList.add('is-me');
+  // is-me deshabilitado: el organigrama es para todos
   if (node.id === 'JOSE_OTERO') row.classList.add('is-jose-otero');
   if (node.id === 'SIN_ASIGNAR') row.classList.add('is-sin-asignar');
   
@@ -1457,7 +1449,7 @@ function renderRow(node, isRoot = false) {
     tags.innerHTML += `<span class="tag location">${person.location}</span>`;
   }
   if (person.isJunior) tags.innerHTML += '<span class="tag junior">Jr</span>';
-  if (person.status === 'Inactivo') tags.innerHTML += '<span class="tag inactive">Inactivo</span>';
+  // estatus no se muestra
   if (person.status === 'Baja Temporal') tags.innerHTML += '<span class="tag baja">Baja temp.</span>';
   info.appendChild(tags);
   
@@ -1511,9 +1503,9 @@ function renderCompactCard(node) {
   card.dataset.id = node.id;
   
   if (node.relation === 'matrix') card.classList.add('is-matrix');
-  if (person.status === 'Inactivo') card.classList.add('is-inactive');
-  if (person.status === 'Baja Temporal') card.classList.add('is-baja');
-  if (node.id === ME_ID) card.classList.add('is-me');
+  // inactivos ya están filtrados
+  // estatus no se muestra
+  // is-me deshabilitado
   
   // FOTO GRANDE ARRIBA (cover)
   card.appendChild(createPhotoCover(person));
@@ -1546,8 +1538,8 @@ function renderCompactCard(node) {
   }
   if (person.location) tags.innerHTML += `<span class="tag location">${person.location}</span>`;
   if (person.isJunior) tags.innerHTML += '<span class="tag junior">Jr</span>';
-  if (person.status === 'Inactivo') tags.innerHTML += '<span class="tag inactive">Inactivo</span>';
-  if (person.status === 'Baja Temporal') tags.innerHTML += '<span class="tag baja">Baja</span>';
+  // estatus no se muestra
+  // estatus no se muestra
   body.appendChild(tags);
   
   card.appendChild(body);
@@ -1557,15 +1549,13 @@ function renderCompactCard(node) {
 
 // === FILTERS ===
 function buildFilters() {
-  const statuses = {}, sectors = {}, teams = {}, locations = {};
+  const sectors = {}, teams = {}, locations = {};
   for (const p of Object.values(DATA.people)) {
     if (!p.inList) continue;
-    if (p.status) statuses[p.status] = (statuses[p.status] || 0) + 1;
     if (p.sector) sectors[p.sector] = (sectors[p.sector] || 0) + 1;
     for (const t of (p.team || [])) if (t) teams[t] = (teams[t] || 0) + 1;
     if (p.location) locations[p.location] = (locations[p.location] || 0) + 1;
   }
-  renderChips('filter-status', statuses, 'status');
   renderChips('filter-sector', sectors, 'sector');
   renderChips('filter-team', teams, 'team');
   renderChips('filter-location', locations, 'location');
@@ -1902,13 +1892,7 @@ function openModal(id) {
   if (p.location) rows.push(['Ubicación', p.location]);
   if (p.entryDate) rows.push(['Fecha de entrada', p.entryDate]);
   if (p.costCenter) rows.push(['Centro de coste', p.costCenter]);
-  if (p.status && p.status !== '—') {
-    let cls = 'team';
-    if (p.status === 'Inactivo') cls = 'inactive';
-    else if (p.status === 'Baja Temporal') cls = 'baja';
-    else if (p.status === 'Activo') cls = 'junior';
-    rows.push(['Estatus', `<span class="tag ${cls}">${p.status}</span>`]);
-  }
+  // Estatus eliminado del modal (información privada)
   if (p.isJunior) rows.push(['Junior', '<span class="tag junior">Sí</span>']);
   if (p.weeklyHours) rows.push(['Horas semanales', p.weeklyHours]);
   
@@ -2053,11 +2037,9 @@ function renderGroupedView(groupKey) {
     
     // Contar por rol mayor
     const roleCounts = {};
-    let activeCount = 0;
     for (const m of members) {
       const lbl = shortRoleLabel(m.role);
       roleCounts[lbl] = (roleCounts[lbl] || 0) + 1;
-      if (m.status === 'Activo') activeCount++;
     }
     const roleSummary = Object.entries(roleCounts)
       .sort((a, b) => b[1] - a[1])
@@ -2070,7 +2052,7 @@ function renderGroupedView(groupKey) {
     header.innerHTML = `
       <span class="group-toggle">▼</span>
       <span class="group-title">${groupName}</span>
-      <span class="group-meta"><b>${members.length}</b>${members.length === 1 ? 'persona' : 'personas'} · ${activeCount} activos${roleSummary ? ' · ' + roleSummary : ''}</span>
+      <span class="group-meta"><b>${members.length}</b>${members.length === 1 ? 'persona' : 'personas'}${roleSummary ? ' · ' + roleSummary : ''}</span>
     `;
     header.onclick = () => {
       block.classList.toggle('collapsed');
@@ -2103,9 +2085,9 @@ function renderGroupedCard(person) {
   card.className = 'grouped-card row';  // 'row' para que applyVisualFilters lo recoja
   card.dataset.id = person.id;
   
-  if (person.status === 'Inactivo') card.classList.add('is-inactive');
-  if (person.status === 'Baja Temporal') card.classList.add('is-baja');
-  if (person.id === ME_ID) card.classList.add('is-me');
+  // inactivos ya están filtrados
+  // estatus no se muestra
+  // is-me deshabilitado
   
   // FOTO GRANDE ARRIBA (cover)
   card.appendChild(createPhotoCover(person));
@@ -2139,8 +2121,8 @@ function renderGroupedCard(person) {
     tags.innerHTML += `<span class="tag location">${person.location}</span>`;
   }
   if (person.isJunior) tags.innerHTML += '<span class="tag junior">Jr</span>';
-  if (person.status === 'Inactivo') tags.innerHTML += '<span class="tag inactive">Inactivo</span>';
-  if (person.status === 'Baja Temporal') tags.innerHTML += '<span class="tag baja">Baja</span>';
+  // estatus no se muestra
+  // estatus no se muestra
   body.appendChild(tags);
   
   card.appendChild(body);
