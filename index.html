@@ -943,6 +943,54 @@ body {
 }
 .grouped-card .gc-mini-tags .tag { font-size: 9px; padding: 1px 6px; }
 
+/* === BADGE JUNIOR (esquina foto) === */
+.photo-cover {
+  position: relative;
+}
+.junior-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid #047857;
+  border-radius: 999px;
+  padding: 3px 8px 3px 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #047857;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.junior-badge span {
+  font-size: 11px;
+  line-height: 1;
+}
+
+/* === CHIP TOGGLE "Solo Juniors" === */
+.chip-junior {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.chip-junior .chip-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+.chip-junior.active {
+  background: #DCF1E8 !important;
+  border-color: #047857 !important;
+  color: #047857 !important;
+}
+.chip-junior.active .count {
+  background: #047857 !important;
+  color: white !important;
+}
+
 .group-empty {
   padding: 24px;
   text-align: center;
@@ -969,8 +1017,8 @@ body {
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="search" placeholder="Buscar persona, rol, team...">
     </div>
-    <button class="btn-toolbar" id="expand-all">Expandir todo</button>
-    <button class="btn-toolbar" id="collapse-all">Colapsar todo</button>
+    <button class="btn-toolbar" id="expand-all" style="display:none">Expandir todo</button>
+    <button class="btn-toolbar" id="collapse-all" style="display:none">Colapsar todo</button>
   </div>
   <div class="stats">
     <span><b id="stat-visible">0</b>visibles</span>
@@ -984,6 +1032,10 @@ body {
     <div class="chips-row" id="filter-sector"></div>
   </div>
   <div class="filter-group">
+    <span class="filter-label">Rol</span>
+    <div class="chips-row" id="filter-role"></div>
+  </div>
+  <div class="filter-group">
     <span class="filter-label">Team</span>
     <div class="chips-row" id="filter-team"></div>
   </div>
@@ -991,24 +1043,25 @@ body {
     <span class="filter-label">Location</span>
     <div class="chips-row" id="filter-location"></div>
   </div>
+  <div class="filter-group">
+    <span class="filter-label">Otros</span>
+    <div class="chips-row" id="filter-misc">
+      <button class="chip chip-junior" data-filter="junior" title="Mostrar solo Junior Consultants">
+        <span class="chip-icon">🌱</span>Solo Juniors<span class="count" id="count-juniors">0</span>
+      </button>
+    </div>
+  </div>
   <button class="clear-btn" id="clear-filters">Limpiar filtros</button>
 </div>
 
 <nav class="tabs-bar">
-  <button class="tab active" data-view="hierarchy">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M12 7v4M6 17V13h12v4"/></svg>
-    Jerárquica
-    <span class="tab-count" id="tabcount-hierarchy">132</span>
-  </button>
-  <button class="tab" data-view="team">
+  <button class="tab active" data-view="team">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     Por Team
-    <span class="tab-count" id="tabcount-team">—</span>
   </button>
   <button class="tab" data-view="location">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
     Por Location
-    <span class="tab-count" id="tabcount-location">—</span>
   </button>
 </nav>
 
@@ -1024,7 +1077,7 @@ body {
     <div class="modal-header" id="modal-header"></div>
     <div class="modal-body" id="modal-body"></div>
     <div class="modal-actions">
-      <button class="btn-modal" id="btn-isolate">Ir al nodo</button>
+      <button class="btn-modal" id="btn-isolate" style="display:none">Ir al nodo</button>
       
     </div>
   </div>
@@ -1310,7 +1363,7 @@ async function fetchData() {
 // === STATE ===
 const state = {
   collapsed: new Set(),
-  filters: { status: new Set(), sector: new Set(), team: new Set(), location: new Set() },
+  filters: { sector: new Set(), role: new Set(), team: new Set(), location: new Set(), junior: false },
   search: '',
   selectedId: null,
 };
@@ -1546,9 +1599,7 @@ function renderCompactCard(node) {
     if (t) tags.innerHTML += `<span class="tag team">${t}</span>`;
   }
   if (person.location) tags.innerHTML += `<span class="tag location">${person.location}</span>`;
-  if (person.isJunior) tags.innerHTML += '<span class="tag junior">Jr</span>';
-  // estatus no se muestra
-  // estatus no se muestra
+  // Junior se muestra como badge en la foto (no como tag)
   body.appendChild(tags);
   
   card.appendChild(body);
@@ -1558,16 +1609,34 @@ function renderCompactCard(node) {
 
 // === FILTERS ===
 function buildFilters() {
-  const sectors = {}, teams = {}, locations = {};
+  const sectors = {}, roles = {}, teams = {}, locations = {};
+  let juniorsCount = 0;
   for (const p of Object.values(DATA.people)) {
     if (!p.inList) continue;
     if (p.sector) sectors[p.sector] = (sectors[p.sector] || 0) + 1;
+    if (p.role) roles[p.role] = (roles[p.role] || 0) + 1;
     for (const t of (p.team || [])) if (t) teams[t] = (teams[t] || 0) + 1;
     if (p.location) locations[p.location] = (locations[p.location] || 0) + 1;
+    if (p.isJunior) juniorsCount++;
   }
   renderChips('filter-sector', sectors, 'sector');
+  renderChips('filter-role', roles, 'role');
   renderChips('filter-team', teams, 'team');
   renderChips('filter-location', locations, 'location');
+  
+  // Inicializar contador de juniors y wire del botón
+  const countJ = document.getElementById('count-juniors');
+  if (countJ) countJ.textContent = juniorsCount;
+  
+  const juniorChip = document.querySelector('.chip-junior');
+  if (juniorChip && !juniorChip.dataset.wired) {
+    juniorChip.dataset.wired = '1';
+    juniorChip.onclick = () => {
+      state.filters.junior = !state.filters.junior;
+      juniorChip.classList.toggle('active', state.filters.junior);
+      applyVisualFilters();
+    };
+  }
 }
 
 function renderChips(containerId, items, filterKey) {
@@ -1598,13 +1667,19 @@ function renderChips(containerId, items, filterKey) {
 
 function personMatchesFilters(p) {
   if (!p) return false;
-  for (const [key, set] of Object.entries(state.filters)) {
-    if (set.size === 0) continue;
+  for (const [key, val] of Object.entries(state.filters)) {
+    // Filtro booleano: junior
+    if (key === 'junior') {
+      if (val === true && !p.isJunior) return false;
+      continue;
+    }
+    // Filtros tipo Set (Sector, Rol, Team, Location)
+    if (!val || val.size === 0) continue;
     if (key === 'team') {
-      const hasMatch = (p.team || []).some(t => set.has(t));
+      const hasMatch = (p.team || []).some(t => val.has(t));
       if (!hasMatch) return false;
     } else {
-      if (!set.has(p[key])) return false;
+      if (!val.has(p[key])) return false;
     }
   }
   return true;
@@ -1612,7 +1687,10 @@ function personMatchesFilters(p) {
 
 function applyVisualFilters() {
   const hasSearch = state.search && state.search.length > 0;
-  const hasFilters = Object.values(state.filters).some(s => s.size > 0);
+  const hasFilters = Object.entries(state.filters).some(([k, v]) => {
+    if (k === 'junior') return v === true;
+    return v && v.size > 0;
+  });
   const anyActive = hasSearch || hasFilters;
   
   let visibleCount = 0;
@@ -1715,7 +1793,10 @@ function applyVisualFilters() {
 // Recalcula el "X personas · N rol · M rol..." de cada grupo
 function updateGroupHeaderMeta(block) {
   const memberIds = (block.dataset.memberIds || '').split('|').filter(Boolean);
-  const hasFilters = state.search || Object.values(state.filters).some(s => s.size > 0);
+  const hasFilters = state.search || Object.entries(state.filters).some(([k, v]) => {
+    if (k === 'junior') return v === true;
+    return v && v.size > 0;
+  });
   
   // Si no hay filtros activos, usar todos los IDs; si sí, usar solo los visibles
   let visibleIds = memberIds;
@@ -1754,16 +1835,18 @@ function updateChipCounts(matchingIds, anyActive) {
     : Object.values(DATA.people).filter(p => p.inList);
   
   // Recalcular cada categoría
-  const counts = { sector: {}, team: {}, location: {} };
+  const counts = { sector: {}, role: {}, team: {}, location: {} };
+  let juniorsCount = 0;
   for (const p of peopleToCount) {
     if (p.sector) counts.sector[p.sector] = (counts.sector[p.sector] || 0) + 1;
+    if (p.role) counts.role[p.role] = (counts.role[p.role] || 0) + 1;
     if (p.location) counts.location[p.location] = (counts.location[p.location] || 0) + 1;
     for (const t of (p.team || [])) if (t) counts.team[t] = (counts.team[t] || 0) + 1;
+    if (p.isJunior) juniorsCount++;
   }
   
-  // Actualizar los <span class="count"> de cada chip sin re-renderizar la chip
-  // (para no perder el estado active)
-  for (const [filterKey, containerId] of [['sector', 'filter-sector'], ['team', 'filter-team'], ['location', 'filter-location']]) {
+  // Actualizar los <span class="count"> de cada chip sin re-renderizar
+  for (const [filterKey, containerId] of [['sector', 'filter-sector'], ['role', 'filter-role'], ['team', 'filter-team'], ['location', 'filter-location']]) {
     const container = document.getElementById(containerId);
     if (!container) continue;
     for (const chip of container.querySelectorAll('.chip')) {
@@ -1772,7 +1855,6 @@ function updateChipCounts(matchingIds, anyActive) {
       if (countSpan) {
         countSpan.textContent = counts[filterKey][name] || 0;
       }
-      // Atenuar chips con count 0 (mejor UX)
       if ((counts[filterKey][name] || 0) === 0 && anyActive && !chip.classList.contains('active')) {
         chip.style.opacity = '0.4';
       } else {
@@ -1780,6 +1862,10 @@ function updateChipCounts(matchingIds, anyActive) {
       }
     }
   }
+  
+  // Actualizar contador de juniors
+  const countJ = document.getElementById('count-juniors');
+  if (countJ) countJ.textContent = juniorsCount;
 }
 
 function updateStats() {
@@ -1830,7 +1916,10 @@ document.getElementById('search').oninput = (e) => {
 };
 
 document.getElementById('clear-filters').onclick = () => {
-  for (const set of Object.values(state.filters)) set.clear();
+  for (const [key, val] of Object.entries(state.filters)) {
+    if (key === 'junior') state.filters.junior = false;
+    else if (val && val.clear) val.clear();
+  }
   document.querySelectorAll('.chip.active').forEach(c => c.classList.remove('active'));
   state.search = '';
   document.getElementById('search').value = '';
@@ -1937,6 +2026,14 @@ function createPhotoCover(person) {
     initials.textContent = person.initials || '??';
     cover.appendChild(initials);
   }
+  // Badge Junior (esquina inferior izquierda)
+  if (person.isJunior) {
+    const badge = document.createElement('div');
+    badge.className = 'junior-badge';
+    badge.title = 'Junior Consultant';
+    badge.innerHTML = '<span>🌱</span>';
+    cover.appendChild(badge);
+  }
   return cover;
 }
 
@@ -1993,16 +2090,8 @@ modalOverlay.onclick = (e) => { if (e.target === modalOverlay) modalOverlay.clas
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modalOverlay.classList.remove('active'); });
 
 document.getElementById('btn-isolate').onclick = () => {
-  if (state.selectedId) {
-    state.highlightBranch = computeBranch(state.selectedId);
-      expandAncestors(state.selectedId);
-    renderOutline();
-    modalOverlay.classList.remove('active');
-    setTimeout(() => {
-      const target = document.querySelector(`.row[data-id="${state.selectedId}"]`);
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-  }
+  // Vista jerárquica eliminada — botón oculto
+  modalOverlay.classList.remove('active');
 };
 
 
@@ -2011,7 +2100,7 @@ document.getElementById('btn-isolate').onclick = () => {
 // === GROUPED VIEWS (Por Team, Sector, Location) ===
 const groupedView = document.getElementById('grouped-view');
 const outlineEl = document.getElementById('outline');
-let currentView = 'hierarchy';
+let currentView = 'team';
 
 // Ordenar roles por jerarquía para visualizarlos en las tarjetas
 const ROLE_PRIORITY = {
@@ -2195,9 +2284,7 @@ function renderGroupedCard(person) {
   if (currentView !== 'location' && person.location) {
     tags.innerHTML += `<span class="tag location">${person.location}</span>`;
   }
-  if (person.isJunior) tags.innerHTML += '<span class="tag junior">Jr</span>';
-  // estatus no se muestra
-  // estatus no se muestra
+  // Junior se muestra como badge en la foto (no como tag)
   body.appendChild(tags);
   
   card.appendChild(body);
@@ -2214,36 +2301,16 @@ tabs.forEach(tab => {
     currentView = view;
     tabs.forEach(t => t.classList.toggle('active', t === tab));
     
-    if (view === 'hierarchy') {
-      outlineEl.style.display = '';
-      groupedView.style.display = 'none';
-      applyVisualFilters();
-    } else {
-      outlineEl.style.display = 'none';
-      groupedView.style.display = '';
-      renderGroupedView(view);
-    }
+    // Solo hay vistas agrupadas (team/location)
+    outlineEl.style.display = 'none';
+    groupedView.style.display = '';
+    renderGroupedView(view);
+    applyVisualFilters();
   };
 });
 
-// Update tab counts
-function updateTabCounts() {
-  const total = Object.values(DATA.people).filter(p => p.inList).length;
-  document.getElementById('tabcount-hierarchy').textContent = total;
-  
-  const teams = new Set();
-  const sectors = new Set();
-  const locations = new Set();
-  for (const p of Object.values(DATA.people)) {
-    if (!p.inList) continue;
-    for (const t of (p.team || [])) teams.add(t);
-    if (p.sector) sectors.add(p.sector);
-    if (p.location) locations.add(p.location);
-  }
-  document.getElementById('tabcount-team').textContent = teams.size;
-  document.getElementById('tabcount-location').textContent = locations.size;
-}
-updateTabCounts();
+// Update tab counts (deshabilitado: ya no hay contadores en las tabs)
+function updateTabCounts() { /* noop */ }
 
 
 // === INIT ===
@@ -2264,24 +2331,15 @@ function initialCollapse() {
 
 // === Carga inicial async ===
 fetchData().then(() => {
-  initialCollapse();
   buildFilters();
-  renderOutline();
+  // Vista por defecto: Por Team
+  const outlineEl = document.getElementById('outline');
+  const groupedView = document.getElementById('grouped-view');
+  if (outlineEl) outlineEl.style.display = 'none';
+  if (groupedView) groupedView.style.display = '';
+  renderGroupedView('team');
+  applyVisualFilters();
 }).catch(e => console.error('[Organigrama] Error en init:', e));
 </script>
-<!-- Indicador de fuente de datos -->
-<style>
-.data-source-badge {
-  position: fixed; bottom: 12px; right: 12px; z-index: 50;
-  background: #FFFFFF; border: 1px solid #E5E3DD; border-radius: 999px;
-  padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  color: #6B6B6B; box-shadow: 0 1px 4px rgba(0,0,0,.08);
-  display: flex; align-items: center; gap: 6px;
-}
-.data-source-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #007F73; }
-</style>
-<div class="data-source-badge" title="Datos cargados desde data.json (origen: Microsoft List)">
-  <span class="dot"></span><span>data.json · Microsoft List</span>
-</div>
 </body>
 </html>
