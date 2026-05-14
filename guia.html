@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de mantenimiento · Organigrama Inetum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   GUÍA · MANTENIMIENTO DEL ORGANIGRAMA
+   Estilo: documentación tipo Stripe/Linear · sereno y profesional
+   ============================================================ */
+
+:root {
+  /* === Tipografía === */
+  --font-display: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Monaco, monospace;
+  
+  /* === Paleta === */
+  --bg: #FCFCFA;
+  --bg-soft: #F5F4F0;
+  --bg-code: #1F2024;
+  --paper: #FFFFFF;
+  --ink: #0E0E0F;
+  --ink-soft: #3A3A3C;
+  --ink-dim: #6B6B6D;
+  --ink-faint: #A5A5A8;
+  --line: #E8E6E0;
+  --line-strong: #D4D1C9;
+  
+  /* === Acentos · Inetum-friendly === */
+  --accent: #E20074;
+  --accent-soft: #FCE0EE;
+  --accent-deep: #B30060;
+  --info: #2563EB;
+  --info-soft: #DBE9FF;
+  --ok: #047857;
+  --ok-soft: #D1FAE5;
+  --warn: #C2410C;
+  --warn-soft: #FED7AA;
+  --danger: #B91C1C;
+  --danger-soft: #FEE2E2;
+  
+  /* === Sombras === */
+  --shadow-1: 0 1px 2px rgba(15,15,15,.04);
+  --shadow-2: 0 4px 12px rgba(15,15,15,.05);
+  --shadow-3: 0 12px 32px rgba(15,15,15,.08);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'kern' 1, 'ss01' 1;
+}
+
+/* === Layout principal === */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+}
+
+/* === Sidebar de navegación === */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-right: 1px solid var(--line);
+  background: var(--paper);
+  padding: 32px 24px;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sidebar-logo {
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 18px;
+  position: relative;
+}
+
+.sidebar-logo::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  background: #F5F340;
+  border-radius: 2px;
+  border: 1.5px solid var(--paper);
+}
+
+.sidebar-brand-text {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.sidebar-brand-text small {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  margin-top: 4px;
+}
+
+.nav-group {
+  margin-bottom: 24px;
+}
+
+.nav-group-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  color: var(--ink-dim);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all .15s;
+  margin-bottom: 1px;
+}
+
+.nav-link:hover {
+  color: var(--ink);
+  background: var(--bg-soft);
+}
+
+.nav-link.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
+.nav-link .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-faint);
+}
+
+.nav-link.active .num { color: var(--accent); }
+
+/* === Contenido principal === */
+.content {
+  padding: 64px 64px 120px;
+  max-width: 980px;
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .content { padding: 40px 24px 80px; }
+}
+
+/* === Hero === */
+.hero {
+  margin-bottom: 80px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  margin: 0 0 20px;
+  color: var(--ink);
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.hero-lead {
+  font-size: 18px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  max-width: 640px;
+  margin-bottom: 28px;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-dim);
+}
+
+.hero-meta b {
+  color: var(--ink);
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* === Secciones === */
+section {
+  margin-bottom: 96px;
+  scroll-margin-top: 24px;
+}
+
+.section-header {
+  margin-bottom: 32px;
+}
+
+.section-number {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+
+h2 em { font-style: italic; }
+
+h3 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -.3px;
+  margin: 28px 0 12px;
+  color: var(--ink);
+}
+
+p {
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.lead {
+  font-size: 17px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* === Bloques de arquitectura === */
+.arch-diagram {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 40px;
+  margin: 32px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.arch-diagram::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(226,0,116,.04), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(37,99,235,.03), transparent 40%);
+  pointer-events: none;
+}
+
+.arch-flow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 800px) {
+  .arch-flow { grid-template-columns: 1fr; }
+  .arch-flow .arch-arrow { transform: rotate(90deg); }
+}
+
+.arch-node {
+  background: var(--bg);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 14px;
+  text-align: center;
+  position: relative;
+  transition: all .2s;
+}
+
+.arch-node:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
+
+.arch-node-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.arch-node-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.arch-node-name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink);
+  letter-spacing: -.2px;
+  line-height: 1.2;
+}
+
+.arch-node.highlight {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.arch-node.highlight .arch-node-name { color: var(--accent-deep); }
+
+.arch-arrow {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-faint);
+  font-size: 18px;
+}
+
+/* Tabla descriptiva de la arquitectura */
+.arch-explain {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+@media (max-width: 700px) {
+  .arch-explain { grid-template-columns: 1fr; }
+}
+
+.arch-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+.arch-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.arch-card-emoji { font-size: 18px; }
+
+.arch-card-desc {
+  font-size: 13px;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* === Step Cards (los 7 pasos) === */
+.step {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+  margin-bottom: 56px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+
+.step:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+@media (max-width: 700px) {
+  .step { grid-template-columns: 1fr; gap: 16px; }
+}
+
+.step-num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 72px;
+  line-height: 0.9;
+  color: var(--accent);
+  letter-spacing: -3px;
+}
+
+.step-body { padding-top: 14px; }
+
+.step-title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -.4px;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+
+.step-desc {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+/* === Mockup screenshots (anotados) === */
+.mockup {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+  box-shadow: var(--shadow-2);
+  position: relative;
+}
+
+.mockup-bar {
+  height: 28px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 6px;
+}
+
+.mockup-bar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d4d4d4;
+}
+
+.mockup-bar-url {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  font-weight: 500;
+}
+
+.mockup-body {
+  padding: 24px;
+  position: relative;
+  min-height: 200px;
+  font-family: var(--font-body);
+}
+
+/* === SharePoint mockup (paso 1 y 2) === */
+.sp-mockup {
+  background: linear-gradient(180deg, #FAF7F5 0%, #F5F1ED 100%);
+}
+
+.sp-header {
+  background: #7B2D87;
+  color: white;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sp-list-toolbar {
+  background: white;
+  padding: 10px 18px;
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #444;
+  border-bottom: 1px solid #E4E2DC;
+}
+
+.sp-list-toolbar-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.sp-list-toolbar-item.highlight {
+  position: relative;
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin: -4px -2px;
+  font-weight: 600;
+}
+
+.sp-list-content {
+  padding: 16px 18px;
+  background: white;
+}
+
+.sp-list-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 17px;
+  margin-bottom: 14px;
+  color: #232323;
+}
+
+.sp-table {
+  font-size: 12px;
+  color: #444;
+  font-family: var(--font-body);
+  width: 100%;
+}
+
+.sp-table-head {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 0.8fr 1fr 0.8fr;
+  gap: 8px;
+  padding: 8px 4px;
+  color: #777;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #E4E2DC;
+}
+
+.sp-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 0.8fr 1fr 0.8fr;
+  gap: 8px;
+  padding: 9px 4px;
+  border-bottom: 1px solid #F1EFEB;
+  align-items: center;
+}
+
+.sp-pill {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 100px;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.sp-pill.purple { background: #E8E3F5; color: #5B3FA8; }
+.sp-pill.pink { background: #FCE0EE; color: #B30060; }
+.sp-pill.teal { background: #D6F0EC; color: #006B62; }
+.sp-pill.yellow { background: #FBE9CC; color: #946800; }
+
+/* === Anotaciones / pins (cliquea aquí) === */
+.pin {
+  position: absolute;
+  background: var(--accent);
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(226,0,116,.4);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pin::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  display: block;
+  animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .4; transform: scale(1.3); }
+}
+
+.pin-arrow {
+  position: absolute;
+  pointer-events: none;
+}
+
+.callout-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* === Checklist === */
+.checklist {
+  background: var(--bg-soft);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 20px 0;
+  border-left: 3px solid var(--ok);
+}
+
+.checklist-title {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ok);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.checklist ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.checklist li {
+  position: relative;
+  padding: 4px 0 4px 22px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.checklist li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  color: var(--ok);
+  font-weight: 700;
+}
+
+/* === Warning callouts === */
+.callout {
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 20px 0;
+  font-size: 13.5px;
+  display: flex;
+  gap: 12px;
+  line-height: 1.55;
+}
+
+.callout-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.callout-body { flex: 1; }
+
+.callout-title {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.callout.info {
+  background: var(--info-soft);
+  border-left: 3px solid var(--info);
+}
+.callout.info .callout-title { color: var(--info); }
+.callout.info { color: #1e3a8a; }
+
+.callout.warn {
+  background: var(--warn-soft);
+  border-left: 3px solid var(--warn);
+}
+.callout.warn .callout-title { color: var(--warn); }
+.callout.warn { color: #7c2d12; }
+
+.callout.danger {
+  background: var(--danger-soft);
+  border-left: 3px solid var(--danger);
+}
+.callout.danger .callout-title { color: var(--danger); }
+.callout.danger { color: #7f1d1d; }
+
+.callout.tip {
+  background: var(--ok-soft);
+  border-left: 3px solid var(--ok);
+}
+.callout.tip .callout-title { color: var(--ok); }
+.callout.tip { color: #064e3b; }
+
+/* === Inline code === */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  font-weight: 500;
+  background: var(--bg-soft);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+/* === Pre-formatted code blocks === */
+pre {
+  background: var(--bg-code);
+  border-radius: 10px;
+  padding: 18px 22px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: #e8eaed;
+  margin: 16px 0;
+  border: 1px solid #2a2c30;
+}
+
+pre .comment { color: #7e8086; }
+pre .key { color: #ff7ab2; }
+pre .str { color: #b5e0a0; }
+pre .num { color: #f5d97b; }
+
+/* === GitHub mockup (paso 6) === */
+.gh-mockup { background: #ffffff; }
+
+.gh-header {
+  background: #24292f;
+  color: white;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  border-bottom: 1px solid #1b1f24;
+}
+
+.gh-repo-name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gh-repo-name .slash { color: #6e7681; }
+
+.gh-files {
+  padding: 0;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  margin: 16px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.gh-file {
+  padding: 8px 16px;
+  border-bottom: 1px solid #eaeef2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #24292f;
+}
+
+.gh-file:last-child { border-bottom: none; }
+.gh-file.highlight { background: var(--accent-soft); }
+.gh-file-icon { color: #57606a; font-size: 14px; }
+
+/* === Pasos numerados pequeños dentro de un paso === */
+.substeps {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0 0;
+}
+
+.substep {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.substep-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  background: var(--ink);
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.substep-text {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  padding-top: 3px;
+}
+
+.substep-text b { color: var(--ink); }
+
+/* === Troubleshooting === */
+.faq-item {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.faq-q {
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+  user-select: none;
+}
+
+.faq-q::before {
+  content: '?';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--info-soft);
+  color: var(--info);
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.faq-q::after {
+  content: '+';
+  margin-left: auto;
+  font-size: 20px;
+  color: var(--ink-faint);
+  font-weight: 300;
+  transition: transform .2s;
+}
+
+.faq-item.open .faq-q::after { transform: rotate(45deg); }
+
+.faq-a {
+  padding: 0 20px 18px 54px;
+  display: none;
+  font-size: 13.5px;
+  color: var(--ink-dim);
+  line-height: 1.6;
+}
+
+.faq-item.open .faq-a { display: block; }
+
+/* === Tabla de columnas (anexo) === */
+.cols-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cols-table thead {
+  background: var(--bg-soft);
+}
+
+.cols-table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--line);
+}
+
+.cols-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-soft);
+  vertical-align: top;
+}
+
+.cols-table tr:last-child td { border-bottom: none; }
+
+.tag-required {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tag-optional {
+  display: inline-block;
+  background: var(--bg-soft);
+  color: var(--ink-dim);
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* === Conversor mockup (paso 5) === */
+.conv-mockup-bg {
+  background: linear-gradient(180deg, #FAFAF8 0%, #F2F0EB 100%);
+}
+
+.conv-step-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 10px 0;
+}
+
+.conv-step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.conv-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.conv-dropzone-mock {
+  border: 2px dashed var(--line-strong);
+  border-radius: 10px;
+  padding: 22px 12px;
+  text-align: center;
+  background: #FAFAF8;
+}
+
+.conv-dropzone-mock-icon { font-size: 28px; margin-bottom: 6px; }
+.conv-dropzone-mock-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.conv-dropzone-mock-hint {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+/* === Footer === */
+.footer {
+  margin-top: 96px;
+  padding-top: 48px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+}
+
+.footer-divider {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+/* === Tabla de contenidos en hero === */
+.toc-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.toc-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 5px 12px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all .15s;
+}
+
+.toc-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* === Tiempo estimado por paso === */
+.step-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.step-meta b {
+  color: var(--ink);
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* === Esquema visual de archivo (placeholder de screenshot) === */
+.placeholder-screenshot {
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0,0,0,.025) 8px, rgba(0,0,0,.025) 16px),
+    var(--bg-soft);
+  border: 2px dashed var(--line-strong);
+  border-radius: 10px;
+  padding: 40px 24px;
+  text-align: center;
+  margin: 16px 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.placeholder-screenshot strong {
+  display: block;
+  font-family: var(--font-body);
+  color: var(--ink);
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- ============================================================
+     SIDEBAR
+     ============================================================ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">i.</div>
+    <div class="sidebar-brand-text">
+      Guía<br>
+      <small>Organigrama Inetum</small>
+    </div>
+  </div>
+  
+  <div class="nav-group">
+    <div class="nav-group-title">Introducción</div>
+    <a class="nav-link active" href="#arquitectura"><span class="num">01</span>Cómo funciona</a>
+  </div>
+  
+  <div class="nav-group">
+    <div class="nav-group-title">Pasos para actualizar</div>
+    <a class="nav-link" href="#paso-1"><span class="num">1</span>Editar Lista</a>
+    <a class="nav-link" href="#paso-2"><span class="num">2</span>Exportar CSV</a>
+    <a class="nav-link" href="#paso-3"><span class="num">3</span>Descargar fotos</a>
+    <a class="nav-link" href="#paso-4"><span class="num">4</span>Abrir conversor</a>
+    <a class="nav-link" href="#paso-5"><span class="num">5</span>Procesar datos</a>
+    <a class="nav-link" href="#paso-6"><span class="num">6</span>Descargar JSON</a>
+    <a class="nav-link" href="#paso-7"><span class="num">7</span>Subir a GitHub</a>
+  </div>
+  
+  <div class="nav-group">
+    <div class="nav-group-title">Referencia</div>
+    <a class="nav-link" href="#troubleshooting"><span class="num">?</span>Problemas comunes</a>
+    <a class="nav-link" href="#anexo"><span class="num">📋</span>Convenciones</a>
+  </div>
+</aside>
+
+<!-- ============================================================
+     CONTENIDO
+     ============================================================ -->
+<main class="content">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Equipo Inetum Consulting España · TWWW</div>
+  <h1>Guía de <em>mantenimiento</em> del organigrama</h1>
+  <p class="hero-lead">
+    Todo lo que necesitas para actualizar el organigrama público cuando alguien entra, sale o cambia en el equipo. Pensado para hacerse en menos de 10 minutos, sin conocimientos técnicos.
+  </p>
+  <div class="hero-meta">
+    <span><b>Tiempo total</b>· 8-10 min</span>
+    <span><b>Nivel</b>· Cualquiera</span>
+    <span><b>Frecuencia</b>· cuando cambies algo en la Lista</span>
+  </div>
+  <div class="toc-pills">
+    <a class="toc-pill" href="#arquitectura">↓ Arquitectura</a>
+    <a class="toc-pill" href="#paso-1">↓ Paso 1</a>
+    <a class="toc-pill" href="#troubleshooting">↓ Problemas</a>
+    <a class="toc-pill" href="#anexo">↓ Convenciones</a>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECCIÓN 1 — CÓMO FUNCIONA (ARQUITECTURA)
+     ============================================================ -->
+<section id="arquitectura">
+  <div class="section-header">
+    <span class="section-number">01 · INTRODUCCIÓN</span>
+    <h2>Cómo <em>funciona</em> el organigrama</h2>
+  </div>
+  
+  <p class="lead">
+    El organigrama es una web estática que muestra los datos de un archivo <code>data.json</code>. Ese JSON se genera a partir de la Microsoft List + carpeta de fotos. Cuando algo cambia en la Lista, regeneras el JSON y lo subes a GitHub. No hay servidor, no hay base de datos, no hay login.
+  </p>
+  
+  <div class="arch-diagram">
+    <div class="arch-flow">
+      <div class="arch-node">
+        <span class="arch-node-icon">🗂️</span>
+        <div class="arch-node-title">Fuente</div>
+        <div class="arch-node-name">Microsoft List</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node highlight">
+        <span class="arch-node-icon">⚙️</span>
+        <div class="arch-node-title">Procesador</div>
+        <div class="arch-node-name">conversor.html</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node">
+        <span class="arch-node-icon">🌐</span>
+        <div class="arch-node-title">Web pública</div>
+        <div class="arch-node-name">GitHub Pages</div>
+      </div>
+    </div>
+  </div>
+  
+  <h3>Los componentes en detalle</h3>
+  
+  <div class="arch-explain">
+    <div class="arch-card">
+      <div class="arch-card-title"><span class="arch-card-emoji">🗂️</span>Microsoft List</div>
+      <p class="arch-card-desc">La fuente de verdad. Lista en SharePoint donde se mantienen todas las personas, roles, equipos, ubicaciones, etc. Solo tú y el equipo TWWW pueden editar.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-title"><span class="arch-card-emoji">📷</span>Carpeta de fotos</div>
+      <p class="arch-card-desc">Carpeta local con las fotos de cada persona. El nombre del archivo debe coincidir con el <code>ID M365</code> de la persona en la Lista.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-title"><span class="arch-card-emoji">⚙️</span>conversor.html</div>
+      <p class="arch-card-desc">Una página HTML que procesa el CSV exportado + las fotos y genera el <code>data.json</code>. Funciona 100% en tu navegador, sin enviar nada a ningún servidor.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-title"><span class="arch-card-emoji">📦</span>data.json</div>
+      <p class="arch-card-desc">El archivo que contiene todos los datos del organigrama (incluidas las fotos en base64). Es lo único que cambia cuando actualizas. Pesa ~1-3 MB con fotos.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-title"><span class="arch-card-emoji">🐙</span>GitHub Pages</div>
+      <p class="arch-card-desc">Hosting gratuito que sirve el organigrama como una URL pública. Cualquiera con el link puede ver el organigrama, pero solo tú puedes modificarlo.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-title"><span class="arch-card-emoji">🌐</span>index.html</div>
+      <p class="arch-card-desc">La web del organigrama. Lee <code>data.json</code> al cargar y pinta las cards, filtros, búsqueda, etc. Si actualizas el JSON, la web refleja los cambios al instante.</p>
+    </div>
+  </div>
+  
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <div class="callout-title">Importante: no hay base de datos en vivo</div>
+      Cada actualización requiere regenerar el <code>data.json</code> y subirlo a GitHub. La Lista de SharePoint es solo la fuente de verdad para ti, no se conecta directamente con la web.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 2 — LOS 7 PASOS
+     ============================================================ -->
+<section id="pasos">
+  <div class="section-header">
+    <span class="section-number">02 · PROCEDIMIENTO</span>
+    <h2>Actualizar el organigrama, <em>paso a paso</em></h2>
+  </div>
+  <p class="lead">
+    Sigue estos 7 pasos en orden. Cada paso tiene su checklist y avisos. Tiempo total estimado: 8-10 minutos (sin contar fotos nuevas).
+  </p>
+</section>
+
+<!-- ===== PASO 1 ===== -->
+<section id="paso-1" class="step">
+  <div class="step-num">1</div>
+  <div class="step-body">
+    <h2 class="step-title">Editar la Microsoft List</h2>
+    <div class="step-meta">
+      <span><b>Dónde</b>SharePoint</span>
+      <span><b>Tiempo</b>1-3 min</span>
+    </div>
+    <p class="step-desc">
+      Abre la Lista "Equipo Inetum Consulting" en SharePoint y haz los cambios necesarios: añade una persona nueva, marca a alguien como Inactivo si se ha ido, o edita su rol, equipo, etc.
+    </p>
+    
+    <div class="mockup">
+      <div class="mockup-bar">
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-url">inetum.sharepoint.com / .../ Equipo Inetum Consulting</span>
+      </div>
+      <div class="mockup-body sp-mockup" style="padding:0">
+        <div class="sp-header">
+          <span style="font-weight:700">⊞ Microsoft Lists</span>
+          <span style="opacity:.7">Equipo Inetum Consulting</span>
+        </div>
+        <div class="sp-list-toolbar">
+          <div class="sp-list-toolbar-item highlight">＋ Agregar nuevo elemento</div>
+          <div class="sp-list-toolbar-item">✎ Editar</div>
+          <div class="sp-list-toolbar-item">↗ Compartir</div>
+          <div class="sp-list-toolbar-item">⬇ Exportar</div>
+        </div>
+        <div class="sp-list-content">
+          <div class="sp-list-title">Equipo Inetum Consulting España</div>
+          <div class="sp-table">
+            <div class="sp-table-head">
+              <div>ID M365</div>
+              <div>Rol/Posición</div>
+              <div>Team</div>
+              <div>Práctica/Sector</div>
+              <div>Estatus</div>
+            </div>
+            <div class="sp-row">
+              <div style="font-weight:600;color:#232323">Monco-Ferre Almudena</div>
+              <div><span class="sp-pill teal">Senior Consultant</span></div>
+              <div><span class="sp-pill pink">FSI</span></div>
+              <div><span class="sp-pill purple">Sector</span></div>
+              <div><span class="sp-pill yellow">Activo</span></div>
+            </div>
+            <div class="sp-row">
+              <div style="font-weight:600;color:#232323">Garcia-Lopez Maria</div>
+              <div><span class="sp-pill teal">Manager</span></div>
+              <div><span class="sp-pill pink">P&T</span></div>
+              <div><span class="sp-pill purple">Práctica</span></div>
+              <div><span class="sp-pill yellow">Activo</span></div>
+            </div>
+            <div class="sp-row" style="opacity:.5">
+              <div style="font-weight:600;color:#232323">···</div>
+              <div>···</div>
+              <div>···</div>
+              <div>···</div>
+              <div>···</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pin" style="top:62px;left:18px">+ Nuevo elemento</div>
+    </div>
+    
+    <div class="checklist">
+      <div class="checklist-title">✓ Antes de cerrar la Lista</div>
+      <ul>
+        <li>Toda persona nueva tiene <code>ID M365</code>, <code>Nombre</code>, <code>Surname</code>, <code>Rol/Posición</code> y <code>Team</code></li>
+        <li>Los que se han ido tienen <code>Estatus = Inactivo</code> (no los borres, ponlos inactivos)</li>
+        <li>Los formatos son los habituales: fecha <code>DD/MM/YYYY</code>, multi-valor para teams</li>
+      </ul>
+    </div>
+    
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body">
+        <div class="callout-title">No borres personas inactivas</div>
+        Si alguien se ha ido, márcalos con <code>Estatus = Inactivo</code> en lugar de borrarlos. El organigrama los filtra automáticamente, pero así mantienes histórico en la Lista.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PASO 2 ===== -->
+<section id="paso-2" class="step">
+  <div class="step-num">2</div>
+  <div class="step-body">
+    <h2 class="step-title">Exportar la Lista a CSV</h2>
+    <div class="step-meta">
+      <span><b>Dónde</b>SharePoint</span>
+      <span><b>Tiempo</b>30 seg</span>
+    </div>
+    <p class="step-desc">
+      Una vez tienes la Lista actualizada, exporta los datos. SharePoint te dará un archivo <code>.csv</code> con todas las filas.
+    </p>
+    
+    <div class="mockup">
+      <div class="mockup-bar">
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-url">inetum.sharepoint.com / .../ Equipo Inetum Consulting</span>
+      </div>
+      <div class="mockup-body sp-mockup" style="padding:0">
+        <div class="sp-header">
+          <span style="font-weight:700">⊞ Microsoft Lists</span>
+          <span style="opacity:.7">Equipo Inetum Consulting</span>
+        </div>
+        <div class="sp-list-toolbar">
+          <div class="sp-list-toolbar-item">＋ Agregar</div>
+          <div class="sp-list-toolbar-item">✎ Editar</div>
+          <div class="sp-list-toolbar-item">↗ Compartir</div>
+          <div class="sp-list-toolbar-item highlight">⬇ Exportar ▼</div>
+        </div>
+        <div style="padding:14px 18px;background:white;min-height:140px;position:relative">
+          <div style="position:absolute;top:8px;right:18px;background:white;border:1px solid #d4d2cc;border-radius:6px;width:200px;box-shadow:0 8px 24px rgba(0,0,0,.1)">
+            <div style="padding:9px 14px;font-size:13px;color:#232323;font-weight:500;cursor:pointer;border-bottom:1px solid #f0eeea">📊 Exportar a Excel</div>
+            <div style="padding:9px 14px;font-size:13px;color:#232323;font-weight:600;cursor:pointer;background:var(--accent-soft);color:var(--accent-deep)">📄 Exportar a CSV ←</div>
+            <div style="padding:9px 14px;font-size:13px;color:#232323;font-weight:500;cursor:pointer">⚡ Power Automate</div>
+          </div>
+        </div>
+      </div>
+      <div class="pin" style="top:62px;right:84px">Click aquí</div>
+    </div>
+    
+    <div class="substeps">
+      <div class="substep">
+        <div class="substep-num">1</div>
+        <div class="substep-text">Click en <b>Exportar</b> (arriba en la barra de herramientas)</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">2</div>
+        <div class="substep-text">Selecciona <b>Exportar a CSV</b> en el desplegable</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">3</div>
+        <div class="substep-text">Se descargará automáticamente un archivo tipo <code>Equipo_Inetum_Consulting.csv</code> a tu carpeta de Descargas</div>
+      </div>
+    </div>
+    
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <div class="callout-title">Excel también vale</div>
+        Si exportas a Excel (<code>.xlsx</code>) en lugar de CSV, el conversor lo acepta igual. CSV es más rápido porque pesa menos.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PASO 3 ===== -->
+<section id="paso-3" class="step">
+  <div class="step-num">3</div>
+  <div class="step-body">
+    <h2 class="step-title">Preparar la carpeta de fotos</h2>
+    <div class="step-meta">
+      <span><b>Dónde</b>Tu equipo (carpeta local)</span>
+      <span><b>Tiempo</b>2-5 min</span>
+    </div>
+    <p class="step-desc">
+      Si has añadido personas nuevas o actualizado fotos, prepara una carpeta local con todas las imágenes. <b>Cada archivo debe llamarse igual que el <code>ID M365</code> de la persona.</b>
+    </p>
+    
+    <h3>Convención de nombre (importante)</h3>
+    
+    <table class="cols-table">
+      <thead>
+        <tr>
+          <th>ID M365 en la Lista</th>
+          <th>Nombre del archivo</th>
+          <th>¿Vale?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Monco-Ferre Almudena</code></td>
+          <td><code>Monco-Ferre Almudena.jpg</code></td>
+          <td style="color:var(--ok);font-weight:700">✓ Exacto</td>
+        </tr>
+        <tr>
+          <td><code>Monco-Ferre Almudena</code></td>
+          <td><code>monco_ferre_almudena.png</code></td>
+          <td style="color:var(--ok);font-weight:700">✓ Sí (tolera _)</td>
+        </tr>
+        <tr>
+          <td><code>Monco-Ferre Almudena</code></td>
+          <td><code>MONCO-FERRE ALMUDENA.JPG</code></td>
+          <td style="color:var(--ok);font-weight:700">✓ Sí (ignora mayúsculas)</td>
+        </tr>
+        <tr>
+          <td><code>Monco-Ferre Almudena</code></td>
+          <td><code>Almudena.jpg</code></td>
+          <td style="color:var(--danger);font-weight:700">✗ No matchea</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="placeholder-screenshot">
+      <strong>📁 Vista de tu carpeta local</strong>
+      Carpeta con todas las fotos nombradas según ID M365<br>
+      <span style="font-family:var(--font-mono);font-size:11px">fotos/<br>├─ Monco-Ferre Almudena.jpg<br>├─ Garcia-Lopez Maria.jpg<br>├─ Rosa-Fernandez Joaquim.jpg<br>└─ ...</span>
+    </div>
+    
+    <h3>Especificaciones técnicas</h3>
+    
+    <table class="cols-table">
+      <thead>
+        <tr><th>Aspecto</th><th>Recomendado</th><th>Aceptado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Formato</b></td><td>JPG</td><td>JPG, PNG, WEBP</td></tr>
+        <tr><td><b>Tamaño</b></td><td>Cuadrada (1:1)</td><td>El conversor NO recorta, sube como quieras verla</td></tr>
+        <tr><td><b>Resolución</b></td><td>300×300px o más</td><td>Cualquiera (se reduce a máx 400px)</td></tr>
+        <tr><td><b>Peso</b></td><td>&lt; 2 MB</td><td>Hasta 10 MB</td></tr>
+      </tbody>
+    </table>
+    
+    <div class="callout warn">
+      <span class="callout-icon">📐</span>
+      <div class="callout-body">
+        <div class="callout-title">Recorta las fotos antes de subirlas</div>
+        El conversor NO recorta automáticamente — la foto se sube tal cual la tengas, redimensionada. Para que queden bien centradas, <b>recórtalas cuadradas con la cara centrada</b> antes (con la app Fotos de Windows, Vista previa de Mac, o <code>iloveimg.com/crop-image</code>).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PASO 4 ===== -->
+<section id="paso-4" class="step">
+  <div class="step-num">4</div>
+  <div class="step-body">
+    <h2 class="step-title">Abrir el conversor</h2>
+    <div class="step-meta">
+      <span><b>Dónde</b>Navegador</span>
+      <span><b>Tiempo</b>10 seg</span>
+    </div>
+    <p class="step-desc">
+      Abre la URL del conversor en tu navegador. Es la herramienta que procesa el CSV + fotos y genera el <code>data.json</code> nuevo.
+    </p>
+    
+    <div class="mockup">
+      <div class="mockup-bar">
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-url" style="color:var(--accent);font-weight:600">consultinginetum.github.io / Organigrama_Inetum / conversor.html</span>
+      </div>
+      <div class="mockup-body conv-mockup-bg">
+        <div style="text-align:center;margin-bottom:18px">
+          <div style="display:inline-flex;width:50px;height:50px;background:var(--accent);border-radius:14px;align-items:center;justify-content:center;color:white;font-family:var(--font-display);font-style:italic;font-size:24px;font-weight:600;position:relative;margin-bottom:12px">
+            i.
+            <span style="position:absolute;right:-4px;top:-4px;width:10px;height:10px;background:#F5F340;border-radius:3px"></span>
+          </div>
+          <div style="font-family:var(--font-display);font-size:24px;letter-spacing:-.5px">Conversor Lista → <code style="font-family:var(--font-mono);background:none;border:none;padding:0;font-size:20px">data.json</code></div>
+          <div style="font-size:12px;color:var(--ink-dim);margin-top:6px">Arrastra el CSV exportado desde tu Microsoft List</div>
+        </div>
+        <div class="conv-step-card">
+          <div class="conv-step-header">
+            <div class="conv-step-num">1</div>
+            <div style="font-weight:600;font-size:13px">Subir archivo</div>
+          </div>
+          <div class="conv-dropzone-mock">
+            <div class="conv-dropzone-mock-icon">📊</div>
+            <div class="conv-dropzone-mock-text">Arrastra el .csv o .xlsx aquí</div>
+            <div class="conv-dropzone-mock-hint">o haz click para seleccionar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <h3>La URL exacta es:</h3>
+    
+    <pre><span class="comment">// Sustituye 'ConsultingInetum' si tu user/org de GitHub es otro</span>
+https://consultinginetum.github.io/Organigrama_Inetum/conversor.html</pre>
+    
+    <div class="callout tip">
+      <span class="callout-icon">🔖</span>
+      <div class="callout-body">
+        <div class="callout-title">Guárdala en favoritos</div>
+        La vas a usar cada vez que actualices. Ponla en marcadores del navegador para ahorrar tiempo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PASO 5 ===== -->
+<section id="paso-5" class="step">
+  <div class="step-num">5</div>
+  <div class="step-body">
+    <h2 class="step-title">Procesar CSV y fotos</h2>
+    <div class="step-meta">
+      <span><b>Dónde</b>conversor.html</span>
+      <span><b>Tiempo</b>1-2 min</span>
+    </div>
+    <p class="step-desc">
+      Arrastra el CSV al conversor. Después aparecerá un segundo paso para arrastrar las fotos. Sigue el flujo:
+    </p>
+    
+    <div class="substeps">
+      <div class="substep">
+        <div class="substep-num">1</div>
+        <div class="substep-text"><b>Arrastra el CSV</b> exportado a la zona "Arrastra el .csv o .xlsx aquí"</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">2</div>
+        <div class="substep-text">El conversor lo procesa y muestra <b>"X personas procesadas"</b>. Si hay errores (columnas faltan), te lo dice en rojo.</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">3</div>
+        <div class="substep-text">Aparece automáticamente un <b>Paso 3 (opcional)</b>: arrastra la carpeta de fotos. Si no tienes fotos nuevas, puedes saltarlo.</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">4</div>
+        <div class="substep-text">El conversor procesa las fotos (barra de progreso). Te muestra cuántas matcharon con personas y cuántas no.</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">5</div>
+        <div class="substep-text">Revisa el resumen: <b>personas totales · con foto · sin foto</b>. Si algo no cuadra, vuelve al paso 1.</div>
+      </div>
+    </div>
+    
+    <div class="callout info">
+      <span class="callout-icon">🔒</span>
+      <div class="callout-body">
+        <div class="callout-title">Tus datos no salen de tu navegador</div>
+        El conversor procesa todo localmente. Las fotos no se suben a ningún servidor — quedan en memoria del navegador hasta que descargas el JSON.
+      </div>
+    </div>
+    
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body">
+        <div class="callout-title">Si una foto no matchea con nadie</div>
+        El conversor te lista los archivos cuyo nombre no coincide con ningún <code>ID M365</code>. Renombra el archivo correctamente y vuelve a empezar desde el paso 5.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PASO 6 ===== -->
+<section id="paso-6" class="step">
+  <div class="step-num">6</div>
+  <div class="step-body">
+    <h2 class="step-title">Descargar el data.json</h2>
+    <div class="step-meta">
+      <span><b>Dónde</b>conversor.html</span>
+      <span><b>Tiempo</b>5 seg</span>
+    </div>
+    <p class="step-desc">
+      Cuando todo está procesado, pulsa <b>"Descargar data.json"</b>. Se descargará un archivo <code>data.json</code> a tu carpeta de Descargas.
+    </p>
+    
+    <div class="mockup">
+      <div class="mockup-bar">
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-url" style="color:var(--accent);font-weight:600">conversor.html — Paso final</span>
+      </div>
+      <div class="mockup-body conv-mockup-bg">
+        <div class="conv-step-card" style="padding:24px">
+          <div class="conv-step-header">
+            <div class="conv-step-num">5</div>
+            <div style="font-weight:600;font-size:13px">Descarga el data.json</div>
+          </div>
+          <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;padding:12px;font-family:var(--font-mono);font-size:11px;color:var(--ink-dim);line-height:1.55;margin:10px 0">
+            <span style="color:var(--ok);font-weight:700">✅</span> Procesadas <b>140 personas</b>. Detectados <b>16 managers directos</b>.<br>
+            <span style="color:var(--info)">📊</span> Tamaño total: <b>~1.3 MB</b> · <b>127 fotos</b> redimensionadas.
+          </div>
+          <div style="display:flex;gap:10px;margin-top:14px">
+            <button style="background:var(--accent);color:white;border:none;padding:10px 18px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;position:relative">
+              ⬇ Descargar data.json
+            </button>
+            <button style="background:white;color:var(--ink);border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer">
+              📋 Copiar al portapapeles
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="pin" style="bottom:46px;left:60px">Click aquí</div>
+    </div>
+    
+    <div class="checklist">
+      <div class="checklist-title">✓ Verifica antes de seguir</div>
+      <ul>
+        <li>El archivo descargado se llama <code>data.json</code> (sin <code>(1)</code>, <code>(2)</code>, etc)</li>
+        <li>El tamaño es razonable: 100 KB sin fotos, 1-3 MB con fotos</li>
+        <li>Si abre el archivo (con Notepad o VS Code), empieza con <code>{"metadata":...</code></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PASO 7 ===== -->
+<section id="paso-7" class="step">
+  <div class="step-num">7</div>
+  <div class="step-body">
+    <h2 class="step-title">Subir el data.json a GitHub</h2>
+    <div class="step-meta">
+      <span><b>Dónde</b>github.com</span>
+      <span><b>Tiempo</b>1 min</span>
+    </div>
+    <p class="step-desc">
+      Reemplaza el <code>data.json</code> antiguo en el repositorio por el nuevo. En 1-2 minutos, GitHub Pages publica los cambios y el organigrama se actualiza.
+    </p>
+    
+    <div class="mockup">
+      <div class="mockup-bar">
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-dot"></span>
+        <span class="mockup-bar-url">github.com / ConsultingInetum / Organigrama_Inetum</span>
+      </div>
+      <div class="mockup-body gh-mockup" style="padding:0">
+        <div class="gh-header">
+          <span style="font-size:14px;font-weight:700">⊕ GitHub</span>
+          <span class="gh-repo-name">
+            <span class="slash">ConsultingInetum / </span>
+            Organigrama_Inetum
+          </span>
+        </div>
+        <div class="gh-files">
+          <div class="gh-file">
+            <span class="gh-file-icon">📄</span>
+            <span>README.md</span>
+          </div>
+          <div class="gh-file">
+            <span class="gh-file-icon">🌐</span>
+            <span>conversor.html</span>
+          </div>
+          <div class="gh-file highlight">
+            <span class="gh-file-icon">📦</span>
+            <span style="font-weight:600">data.json</span>
+            <span style="margin-left:auto;font-size:11px;color:var(--accent-deep);font-family:var(--font-mono);font-weight:600">← reemplazar este</span>
+          </div>
+          <div class="gh-file">
+            <span class="gh-file-icon">🌐</span>
+            <span>index.html</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <h3>Dos formas de hacerlo</h3>
+    
+    <h3 style="font-size:15px;color:var(--ink-soft);font-weight:600;margin-top:20px">Opción A — Drag &amp; drop (más rápida)</h3>
+    
+    <div class="substeps">
+      <div class="substep">
+        <div class="substep-num">1</div>
+        <div class="substep-text">Ve a <code>github.com/ConsultingInetum/Organigrama_Inetum</code></div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">2</div>
+        <div class="substep-text">Click en el archivo <code>data.json</code> que está actualmente</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">3</div>
+        <div class="substep-text">Click en el icono ✏️ (lápiz de "Edit this file") arriba a la derecha</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">4</div>
+        <div class="substep-text"><b>Borra todo</b> el contenido (Ctrl+A → Suprimir)</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">5</div>
+        <div class="substep-text">Abre el <code>data.json</code> nuevo (descargado) con Notepad o VS Code, copia TODO (Ctrl+A → Ctrl+C)</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">6</div>
+        <div class="substep-text">Pega en GitHub (Ctrl+V)</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">7</div>
+        <div class="substep-text">Abajo, escribe un mensaje tipo <code>"Actualización del organigrama 12/05"</code> y click en <b>"Commit changes"</b></div>
+      </div>
+    </div>
+    
+    <h3 style="font-size:15px;color:var(--ink-soft);font-weight:600;margin-top:24px">Opción B — Reemplazo con upload (si el archivo es muy grande)</h3>
+    
+    <div class="substeps">
+      <div class="substep">
+        <div class="substep-num">1</div>
+        <div class="substep-text">En el repo, click en el <code>data.json</code> actual</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">2</div>
+        <div class="substep-text">Click en los <b>3 puntos (⋯)</b> arriba a la derecha → <b>"Delete file"</b> → Commit</div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">3</div>
+        <div class="substep-text">Vuelve a la raíz del repo → <b>"Add file" → "Upload files"</b></div>
+      </div>
+      <div class="substep">
+        <div class="substep-num">4</div>
+        <div class="substep-text">Arrastra el <code>data.json</code> nuevo → Commit</div>
+      </div>
+    </div>
+    
+    <div class="callout tip">
+      <span class="callout-icon">⏱️</span>
+      <div class="callout-body">
+        <div class="callout-title">Después del commit</div>
+        GitHub Pages tarda 1-2 minutos en publicar los cambios. Después, haz <b>Ctrl+Shift+R</b> (hard refresh) en la web del organigrama para verlos.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 3 — TROUBLESHOOTING
+     ============================================================ -->
+<section id="troubleshooting">
+  <div class="section-header">
+    <span class="section-number">03 · TROUBLESHOOTING</span>
+    <h2>Problemas <em>comunes</em></h2>
+  </div>
+  <p class="lead">
+    Las dudas y errores más típicos. Click en cada uno para ver la solución.
+  </p>
+  
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">No veo los cambios después de subir el data.json</div>
+    <div class="faq-a">
+      <p><b>Caché del navegador.</b> GitHub Pages ya publicó los cambios pero tu navegador sigue mostrando la versión vieja.</p>
+      <p>Soluciones:</p>
+      <ul>
+        <li><b>Ctrl + Shift + R</b> (Windows) o <b>Cmd + Shift + R</b> (Mac): hard refresh</li>
+        <li>Abrir la URL en <b>modo incógnito</b> (Ctrl+Shift+N): descarta caché</li>
+        <li>Esperar 2-3 minutos: GitHub Pages a veces tarda en propagar</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Una persona aparece sin foto aunque la subí al conversor</div>
+    <div class="faq-a">
+      <p><b>El nombre del archivo no matchea con su <code>ID M365</code>.</b></p>
+      <p>Revisa que la foto se llame exactamente como su ID M365 en la Lista. Por ejemplo, si su ID es <code>Monco-Ferre Almudena</code>, la foto debe llamarse <code>Monco-Ferre Almudena.jpg</code> (o similar — el conversor tolera espacios, guiones, mayúsculas).</p>
+      <p>Cuando proceses las fotos en el conversor, te muestra qué archivos NO matchearon con ninguna persona. Renombra esos y vuelve al paso 5.</p>
+    </div>
+  </div>
+  
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">El conversor dice "Falta columna requerida"</div>
+    <div class="faq-a">
+      <p>El conversor necesita estas columnas exactas en el CSV: <code>ID M365</code>, <code>Nombre</code>, <code>Surname</code>, <code>Rol/Posición</code>, <code>Team</code>.</p>
+      <p>Si alguna falta, vuelve a la Lista de SharePoint y comprueba que existen con ese nombre exacto. Si el nombre cambió, dímelo y actualizo el conversor para que lo reconozca.</p>
+    </div>
+  </div>
+  
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">El data.json pesa más de 10 MB</div>
+    <div class="faq-a">
+      <p>Probablemente las fotos originales son muy pesadas. El conversor las redimensiona a 400px pero JPEG calidad 85% conserva mucho detalle.</p>
+      <p>Opciones:</p>
+      <ul>
+        <li>Comprime las fotos originales antes de subirlas (a ~300×300, &lt; 100 KB cada una)</li>
+        <li>Usa un servicio como <code>tinypng.com</code> para comprimir en lote</li>
+        <li>Si pesa más de 100 MB, GitHub lo rechazará — habrá que usar otra estrategia</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">GitHub me dice que el commit es muy grande</div>
+    <div class="faq-a">
+      <p>GitHub permite archivos hasta 100 MB. Si tu <code>data.json</code> supera eso, las fotos están sin comprimir bien.</p>
+      <p>Reduce el tamaño máximo en el conversor (actualmente 400px). Pídeme bajarlo a 300px y se reducirá ~40% el peso.</p>
+    </div>
+  </div>
+  
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">No me deja exportar la Lista a CSV</div>
+    <div class="faq-a">
+      <p>Necesitas permisos de lectura sobre la Lista. Si no aparece el botón "Exportar":</p>
+      <ul>
+        <li>Asegúrate de tener al menos permisos de <b>Lectura</b> sobre la Lista</li>
+        <li>Refresca la página (a veces SharePoint tarda en cargar el toolbar)</li>
+        <li>Alternativa: exporta a Excel (<code>.xlsx</code>) — vale igual</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Cómo cambio entre modo claro y modo oscuro?</div>
+    <div class="faq-a">
+      <p>En el header del organigrama, arriba a la derecha, hay un botón con un icono de sol/luna ☀️🌙. Click para alternar.</p>
+      <p>Tu preferencia se recuerda en el navegador (localStorage). Si quieres resetearlo: abre la consola del navegador (F12), pestaña "Application" → "Local Storage" → borra la entrada <code>organigrama-theme</code>.</p>
+    </div>
+  </div>
+  
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Quiero añadir/eliminar una columna en la Lista</div>
+    <div class="faq-a">
+      <p>Puedes añadir cualquier columna que quieras a la Lista — el conversor solo lee las que reconoce. Pero si quieres que esa columna aparezca en el organigrama, dímelo y actualizo el código del conversor + el index.html.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 4 — ANEXO / CONVENCIONES
+     ============================================================ -->
+<section id="anexo">
+  <div class="section-header">
+    <span class="section-number">04 · REFERENCIA</span>
+    <h2>Convenciones y <em>anexos</em></h2>
+  </div>
+  
+  <h3>Columnas de la Microsoft List</h3>
+  
+  <table class="cols-table">
+    <thead>
+      <tr><th>Columna</th><th>Tipo</th><th>Ejemplo</th><th>Estado</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>ID M365</code></td>
+        <td>Texto</td>
+        <td><code>Monco-Ferre Almudena</code></td>
+        <td><span class="tag-required">Requerido</span></td>
+      </tr>
+      <tr>
+        <td><code>Nombre</code></td>
+        <td>Texto</td>
+        <td><code>Almudena</code></td>
+        <td><span class="tag-required">Requerido</span></td>
+      </tr>
+      <tr>
+        <td><code>Surname</code></td>
+        <td>Texto</td>
+        <td><code>Monco Ferre</code></td>
+        <td><span class="tag-required">Requerido</span></td>
+      </tr>
+      <tr>
+        <td><code>Rol/Posición</code></td>
+        <td>Opción</td>
+        <td><code>Senior Consultant</code></td>
+        <td><span class="tag-required">Requerido</span></td>
+      </tr>
+      <tr>
+        <td><code>Team</code></td>
+        <td>Opción (multi)</td>
+        <td><code>FSI</code> · <code>FSI, P&amp;T</code></td>
+        <td><span class="tag-required">Requerido</span></td>
+      </tr>
+      <tr>
+        <td><code>Práctica/Sector</code></td>
+        <td>Opción</td>
+        <td><code>Sector</code> · <code>Práctica</code></td>
+        <td><span class="tag-optional">Opcional</span></td>
+      </tr>
+      <tr>
+        <td><code>Estatus</code></td>
+        <td>Opción</td>
+        <td><code>Activo</code> · <code>Inactivo</code></td>
+        <td><span class="tag-optional">Opcional</span></td>
+      </tr>
+      <tr>
+        <td><code>Location</code></td>
+        <td>Texto</td>
+        <td><code>Madrid</code></td>
+        <td><span class="tag-optional">Opcional</span></td>
+      </tr>
+      <tr>
+        <td><code>Entry Date</code></td>
+        <td>Fecha</td>
+        <td><code>09/01/2023</code></td>
+        <td><span class="tag-optional">Opcional</span></td>
+      </tr>
+      <tr>
+        <td><code>Junior</code></td>
+        <td>Sí/No</td>
+        <td><code>Sí</code></td>
+        <td><span class="tag-optional">Opcional</span></td>
+      </tr>
+      <tr>
+        <td><code>CostCenter</code></td>
+        <td>Texto</td>
+        <td><code>573731T</code></td>
+        <td><span class="tag-optional">Opcional</span></td>
+      </tr>
+      <tr>
+        <td><code>Horas semanales</code></td>
+        <td>Número</td>
+        <td><code>40</code></td>
+        <td><span class="tag-optional">Opcional</span></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <h3>Personas que NO aparecen en el organigrama</h3>
+  
+  <p>El organigrama filtra automáticamente:</p>
+  
+  <ul style="color:var(--ink-soft);font-size:14px;line-height:1.7;padding-left:24px">
+    <li><b>Estatus = Inactivo</b> → no se ven, no se cuentan</li>
+    <li><b>Nombre contiene "Demanda"</b> (ej: "Manager 1 Zz Demanda") → no se ven</li>
+  </ul>
+  
+  <p>Los demás siempre aparecen, independientemente de su estatus (Activo, Baja Temporal, etc.).</p>
+  
+  <h3>URLs importantes</h3>
+  
+  <table class="cols-table">
+    <thead>
+      <tr><th>Qué</th><th>URL</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>🌐 <b>Organigrama público</b></td>
+        <td><code>https://consultinginetum.github.io/Organigrama_Inetum/</code></td>
+      </tr>
+      <tr>
+        <td>⚙️ <b>Conversor</b></td>
+        <td><code>https://consultinginetum.github.io/Organigrama_Inetum/conversor.html</code></td>
+      </tr>
+      <tr>
+        <td>🐙 <b>Repositorio GitHub</b></td>
+        <td><code>https://github.com/ConsultingInetum/organigrama-inetum</code></td>
+      </tr>
+      <tr>
+        <td>🗂️ <b>Microsoft List</b></td>
+        <td><code>inetum.sharepoint.com/.../Equipo Inetum Consulting</code></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <h3>Chuleta de bolsillo</h3>
+  
+  <pre><span class="comment">// Flujo completo en una línea</span>
+Lista → Exportar CSV → conversor.html → data.json → GitHub → ✨
+
+<span class="comment">// Atajos útiles</span>
+<span class="key">Hard refresh</span>:     Ctrl + Shift + R
+<span class="key">Modo incógnito</span>:   Ctrl + Shift + N
+<span class="key">Consola</span>:          F12
+
+<span class="comment">// Si todo falla</span>
+1. Hard refresh
+2. Modo incógnito
+3. Mirar la consola (F12) por errores en rojo
+4. Pedirme ayuda</pre>
+  
+</section>
+
+<div class="footer">
+  <div class="footer-divider">·  ·  ·</div>
+  <p>Guía mantenida por TWWW · Inetum Consulting España · v1.0</p>
+</div>
+
+</main>
+</div>
+
+<script>
+// === Active link based on scroll ===
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+
+function updateActiveLink() {
+  const scrollY = window.scrollY;
+  let current = '';
+  
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 100;
+    if (scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+}
+
+window.addEventListener('scroll', updateActiveLink);
+updateActiveLink();
+</script>
+
+</body>
+</html>
